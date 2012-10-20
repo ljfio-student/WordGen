@@ -9,6 +9,7 @@
 
 #include <string>
 #include <vector>
+#include <math.h>
 
 /* 
  *  WordGen Class Definition
@@ -30,7 +31,8 @@ class WordGen{
     int current;
     
     WordGen(int, int, std::string);
-    
+    int resume(std::string);
+
     std::string next();
     void run();
 };
@@ -46,6 +48,33 @@ WordGen::WordGen(int newmax, int newmin, std::string newlist){
 
     setup(counter);
   }
+}
+
+/* 
+ *  WordGen resume()
+ */
+int WordGen::resume(std::string str){
+  int total = 0;
+
+  word.clear();
+  change.clear(); 
+ 
+  for(int i = 0; i < str.size(); i++){
+    for(int a = 0; a < list.size(); a++){
+      if(str[i] == list[a]){
+        
+        total += (list.size() - a - 1) * pow(10, (str.size() - i- 1));
+
+        word.push_back(a);
+        change.push_back(false);
+        break;
+      }
+    }
+  }
+  
+  total += 1;
+
+  return total;
 }
 
 /* 

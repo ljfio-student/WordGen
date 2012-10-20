@@ -21,7 +21,7 @@ int main(int argc, char* argv[]){
   printf("  Verexa's Word List Generator\n\n");
 
   int max_limit, min_limit;
-  string list;
+  string list, resume;
 
   FILE *out;
   bool will_out = false;
@@ -60,6 +60,14 @@ int main(int argc, char* argv[]){
       out = fopen(val.c_str(), "w");
       if(out != NULL) will_out = true;
     }
+    else if(opt == "from"){
+      if(!val.empty()){
+        resume = val;
+        max_limit = resume.size();
+
+        printf("  Resume From: %s\n", resume.c_str(), max_limit);
+      }
+    }
   }
 
   if(max_limit > 0 && min_limit > 0 && min_limit <= max_limit && list.size() != 0){
@@ -74,9 +82,13 @@ int main(int argc, char* argv[]){
     clock_t start, now, then;
     double final;
 
-    for(int a = max_limit; a >= min_limit; a--)
-      total += pow((double)list.size(), a);
-    
+    if(!resume.empty()){
+      total = gen.resume(resume);
+    } else {
+      for(int a = max_limit; a >= min_limit; a--)
+        total += pow((double)list.size(), a);
+    }
+
     // Run the program
     start = clock();
     then = start;
@@ -105,6 +117,6 @@ int main(int argc, char* argv[]){
     printf("  Completed Word List Generation!\n\n  Time Taken: %.2lfs\n", final);
   }
   else{
-    printf("  Usage: %s [opt]:[val] ...\n\n  [opt]     [val]\n   max      e.g. 6\n   min      e.g. 3\n   list     e.g. lu (l = lowercase, u = uppercase, n = numbers, s = symbols)\n   out      e.g. output.txt\n", argv[0]);
+    printf("  Usage: %s [opt]:[val] ...\n\n  [opt]     [val]\n   max      e.g. 6\n   min      e.g. 3\n   list     e.g. lu (l = lowercase, u = uppercase, n = numbers, s = symbols)\n   out      e.g. output.txt\n   from     e.g. ha32s\n", argv[0]);
   }
 }
