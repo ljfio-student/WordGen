@@ -22,7 +22,10 @@ int main(int argc, char* argv[]){
 
   int max_limit, min_limit;
   string list;
-    
+
+  FILE *out;
+  bool will_out = false;
+
   // Parse command line input
   for(int a = 0; a < argc; a++){
     string opts = argv[a], opt = "", val = "", pch = "";
@@ -52,7 +55,11 @@ int main(int argc, char* argv[]){
         else if(pch == "n") list += numbers;
         else if(pch == "s") list += special;
       }
-    } 
+    }
+    else if(opt == "out"){
+      out = fopen(val.c_str(), "w");
+      if(out != NULL) will_out = true;
+    }
   }
 
   if(max_limit > 0 && min_limit > 0 && min_limit <= max_limit && list.size() != 0){
@@ -79,22 +86,25 @@ int main(int argc, char* argv[]){
     
     while(!str.empty()){
       on++;
-
+        
+      if(will_out) fprintf(out, "%s\n", str.c_str());
+      
       if(cur != gen.current || (double(now - then) / CLOCKS_PER_SEC) >= 2){
         printf("  %i W: %.0Lf of %.0Lf\n", gen.current, on, total);
         then = now;
         cur = gen.current;
       }
-
+      
       str = gen.next();
       now = clock();
     }
   
     final = (double(now - start) / CLOCKS_PER_SEC);
- 
+    
+    if(will_out) fclose(out);
     printf("  Completed Word List Generation!\n\n  Time Taken: %.2lfs\n", final);
   }
   else{
-    printf("  Usage: %s [opt]:[val] ...\n\n  [opt]     [val]\n   max      e.g. 6\n   min      e.g. 3\n   list     e.g. lu (l = lowercase, u = uppercase, n = numbers, s = symbols)\n", argv[0]);
+    printf("  Usage: %s [opt]:[val] ...\n\n  [opt]     [val]\n   max      e.g. 6\n   min      e.g. 3\n   list     e.g. lu (l = lowercase, u = uppercase, n = numbers, s = symbols)\n   out      e.g. output.txt\n", argv[0]);
   }
 }
